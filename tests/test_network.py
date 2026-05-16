@@ -43,7 +43,7 @@ class TestCPPNLayer:
     def test_repr(self):
         rng = np.random.default_rng(0)
         layer = CPPNLayer(4, 8, "sin", rng)
-        assert "4→8" in repr(layer)
+        assert "4->8" in repr(layer)
         assert "sin" in repr(layer)
 
 
@@ -87,13 +87,12 @@ class TestCPPN:
         """Different seeds should produce visually distinct images."""
         X = np.linspace(-1, 1, 32, dtype=np.float32)
         Y = np.zeros(32, dtype=np.float32)
-        # Use several seed pairs and require at least one to differ
         pairs = [(42, 137), (1000, 2000), (314, 271)]
         for s1, s2 in pairs:
             out1 = CPPN(seed=s1).forward(X, Y)
             out2 = CPPN(seed=s2).forward(X, Y)
             if not np.allclose(out1, out2, atol=1e-3):
-                return  # pass: at least one pair differs
+                return
         pytest.fail("All seed pairs produced identical output")
 
     def test_output_not_flat(self):
@@ -112,7 +111,6 @@ class TestCPPN:
         """t=0.0 and t=0.5 should produce different images (the animation moves)."""
         X = np.linspace(-1, 1, 32, dtype=np.float32)
         Y = np.zeros(32, dtype=np.float32)
-        # Try multiple seeds; at least one must show time-variation
         for seed in [42, 137, 1000]:
             out0 = CPPN(seed=seed).forward(X, Y, t=0.0)
             out5 = CPPN(seed=seed).forward(X, Y, t=0.5)
